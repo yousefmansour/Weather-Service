@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<head>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&language=en-gb"></script>
+	<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=PT+Sans+Narrow' rel='stylesheet' type='text/css'>
+	<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div id="content">
+	<div id="header">Weather Thingy</div>
+	<div id="form">
+		<form action="" method="GET">
+			City: <br />
+			<input type="text" id="city"> <span id="message"> </span><br />
+			<input type="checkbox" value="weather" id="weather" class="options"> Weather<br />
+			<input type="checkbox" value="wind" id="wind" class="options"> Wind<br />
+			<input type="checkbox" value="humidity" id="humidity" class="options"> Humidity<br />			
+			<input type="checkbox" value="pressure" id="pressure" class="options"> Pressure<br />
+			<input type="checkbox" value="pressure" id="all" class="options"> All<br />
+			<input id="submit" type="submit" value="Find">
+			<button id="clear" value="Clear">Clear</button>
+	</form>
+	</div>
+	<div id="result"></div>
+</div>
+
+<script>
+	$(document).ready(function(){
+	  
+		$("#city").focus();
+		$("#clear").click(function(e){
+			e.preventDefault();
+			$("#result").html("");
+		});
+		
+		$("#all").click(function(){
+			$("#form input:checkbox").each(function(){
+				this.checked = $("#all").prop('checked');
+			});
+		});
+		
+		$(document).keypress(function(e){
+			if(e.which === 13){
+				e.preventDefault();
+				$("#submit").click();
+			}
+		});
+		
+		
+		var input = document.getElementById('city');
+        var autocomplete = new google.maps.places.Autocomplete(input, {types: ['(cities)']});
+		
+		$("#submit").click(function(e){
+			e.preventDefault();
+			
+			var city = $("#city").val();
+			var options = {};
+			options['pressure'] = $("#pressure").is(":checked");
+			options['weather'] = $("#weather").is(":checked");
+			options['humidity'] = $("#humidity").is(":checked");
+			options['wind'] = $("#wind").is(":checked");
+			
+
+			if(city.length < 1){
+				$("#message").html("Please input a city");
+				return false;
+			}			
+			
+			getCityInfo(city);	
+			
+			function getCityInfo(city){
+				$.ajax({
+					url: "http://api.openweathermap.org/data/2.5/weather?q="+ city +"&APPID=e67b50748430614c8138ba7135456420",
+					dataType: "json"
+				}).done(function(json){
+					
+					if(typeof json !== 'object'){
+						alert('An error has occurred.');
+						return false;
+					}
+					
+					if(json.cod !== 200){					
+						$("#message").html("City not found");
+						return false;
+					}
+
+					if(city.indexOf(',') > -1){
+						var request = city.substr(0, city.indexOf(',')).toLowerCase();
+						if(request !== json.name.toLowerCase()){
+							getCityInfo(request);
+							return false;
+						}
+					}
+
+					var temp = json.main.temp;
+					temp = Math.round(temp - 273.15);
+					var colorClass = 'mild';
+					
+					if (temp < -10){
+						colorClass = 'freezing';
+					} else if (temp < 10){
+						colorClass = 'cold';
+					} else if (temp < 20){
+						colorClass = 'mild';
+					} else if (temp < 30){
+						colorClass = 'warm';
+					} else if (temp > 32){
+						colorClass = 'hot';
+					}
+					
+					var results = $(".weather-result");
+					if(results.length > 14){
+						$(".weather-result").last().remove();
+					}
+					
+					$("#result").prepend("<div class='weather-result " + colorClass + "'><span class='city-name'><b>" + json.name + ', ' + json.sys.country + "</b></span><br />");
+					
+					$(".weather-result").first().append("Temperature: " + temp + "&deg <br />");
+						
+					if(options['weather']){
+						var weather = json.weather[0].description;
+						$(".weather-result").first().append("Weather: " + weather.toLowerCase() + "<br />");
+					}
+					
+					if(options['wind']){
+						var wind = json.wind.speed;
+						$(".weather-result").first().append("Wind: " + wind + " km/h<br />");
+					}
+					
+					if(options['humidity']){
+						var humidity = json.main.humidity;		
+						$(".weather-result").first().append("Humidity: " + humidity + "%<br />");						
+					}
+					
+					if(options['pressure']){				
+						var pressure = json.main.pressure;
+						$(".weather-result").first().append("Pressure: " + Math.round(pressure).toFixed(0) + " mb");
+					}
+					
+					$("#result").append("</div>");
+					
+					
+					$("#message").html("");
+					$("#form input:checkbox").each(function(){
+						this.checked = false;
+					});
+					$("#city").val("");
+					$("#city").focus();
+					
+					$('.weather-result').mousedown(function(){
+						$(this).css('border', 'inset');
+						$(this).mouseleave(function(){
+							$(this).css('border', 'outset');
+						});
+					});
+					$('.weather-result').mouseup(function(){
+						$(this).remove();
+					});
+				});
+			}		
+		});
+	});
+</script>
+</body>
+</html>

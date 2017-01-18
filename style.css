@@ -1,0 +1,105 @@
+html, body {
+	background-image: url('background.jpg');
+	background-attachment: fixed;  
+	background-size: cover; 
+	background-repeat: no-repeat;
+	-webkit-user-select: none;
+    -moz-user-select: none;
+	padding: 0;
+	margin: 0;
+}
+
+#content {
+	width: 50em;
+	height: 64em;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	background: -moz-linear-gradient(white, whitesmoke);
+	background: linear-gradient(white, whitesmoke);
+	border-radius: 1em;
+	border: 1px solid #A9D0F5;
+}
+
+#header {
+	font-family: Pacifico, sans-serif;
+	font-size: 150%;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#form {
+	font-family: 'Dosis', sans-serif;
+	font-weight: bold;
+	padding: 2em;
+	background: -moz-linear-gradient(white,#58FAF4);
+	background: linear-gradient(white,#58FAF4);
+}
+
+#city {
+	width: 20em;
+	background: #E6E6E6;
+	box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+}
+
+#message {
+	font-style: Arial;
+	font-size: 90%;
+	font-style: italic;	
+}
+
+#params option {
+	background: #E6E6E6;
+}
+
+#params {
+	background: #E6E6E6;
+}
+
+#submit {
+	background: #E6E6E6;
+}
+
+#clear {
+	background: #E6E6E6;
+}
+
+#result {
+	padding: 0.5em;
+	height: 46.8em;
+	border-radius: 1em;
+	background: -moz-linear-gradient(white,#E6E6E6);
+	background: linear-gradient(white, #E6E6E6);
+}
+
+.weather-result {
+	width: 28.4%;
+	height: 8em;
+	margin: 0.5em;
+	padding: 0.5em;
+	float: left;
+	border-radius: 1em;
+	border-style: outset;
+	font-family: 'Dosis', serif;
+}
+
+.hot {
+	background-color: #FF2A2A;
+}
+
+.warm {
+	background-color: #FFDB4D;
+}
+
+.mild {
+	background-color: #99FF33;
+}
+
+.cold{ 
+	background-color: #81F7F3;
+}
+
+.freezing {
+	background-color: #3399FF;
+}
